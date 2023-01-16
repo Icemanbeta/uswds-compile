@@ -246,7 +246,20 @@ navigation = behavior(
         const button = this.querySelector(NAV_CONTROL);
 
         if(button) {
+          console.log(this.closest('.usa-nav__submenu-item'))
+          if(this.closest('.usa-nav__submenu-item')) {
+            const contents = (
+              button.getAttribute('aria-controls') &&
+              document.getElementById(button.getAttribute('aria-controls'))
+            );
+
+            if(contents) {
+              contents.style.position = 'relative';
+            }
+          }
+
           toggle(button, true);
+
         }
       },
     },
@@ -257,6 +270,17 @@ navigation = behavior(
           const button = this.querySelector(NAV_CONTROL);
 
           if(button) {
+            if(this.closest('.usa-nav__submenu-item')) {
+              const contents = (
+                button.getAttribute('aria-controls') &&
+                document.getElementById(button.getAttribute('aria-controls'))
+              );
+    
+              if(contents) {
+                contents.style.position = null;
+              }
+            }
+
             toggle(button, false);
           }
         }
