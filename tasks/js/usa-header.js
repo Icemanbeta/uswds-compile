@@ -33,6 +33,21 @@ let navigation;
 let navActive;
 let nonNavElements;
 
+const isDescendant = function (parent, child) {
+  let node = child.parentNode;
+
+  while (node) {
+    if (node === parent)
+      return true;
+
+    // Traverse up to the parent
+    node = node.parentNode;
+  }
+
+  // Go up until the root but couldn't find the `parent`
+  return false;
+};
+
 const isActive = () => document.body.classList.contains(ACTIVE_CLASS);
 const SCROLLBAR_WIDTH = ScrollBarWidth();
 const INITIAL_PADDING = window
@@ -242,31 +257,44 @@ navigation = behavior(
     },
 
     mouseover: {
-      [NAV_PRIMARY_ITEM]() {
+      [NAV_PRIMARY_ITEM](e) {
         const button = this.querySelector(NAV_CONTROL);
 
-        if(button) {
-          console.log(this.closest('.usa-nav__submenu-item'))
+        e.stopPropagation();
+
+        if(button && !!isDescendant(button, e.target)) {
+          let contents;
+
           if(this.closest('.usa-nav__submenu-item')) {
-            const contents = (
+            contents = (
               button.getAttribute('aria-controls') &&
               document.getElementById(button.getAttribute('aria-controls'))
             );
 
+            // x=e.clientX;
+
+            
             if(contents) {
-              contents.style.position = 'relative';
+              contents.style.top = '6px';
+              contents.style.left = '-16px';
+              contents.style.marginLeft = '100%';
             }
           }
 
           toggle(button, true);
 
+          if(contents) {
+            console.log(e.clientX, window.outerWidth, contents.offsetWidth)
+          }
         }
       },
     },
 
     mouseout: {
-      [NAV_PRIMARY_ITEM](event) {
-        if(!this.contains(event.relatedTarget)) {
+      [NAV_PRIMARY_ITEM](e) {
+        e.stopPropagation();
+
+        if(!this.contains(e.relatedTarget)) {
           const button = this.querySelector(NAV_CONTROL);
 
           if(button) {
